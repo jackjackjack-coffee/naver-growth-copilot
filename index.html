@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>네이버 그로스 코파일럿 — 셀러 · 클립 창작자</title>
+    <meta name="description" content="한 엔진, 두 사용자 — 네이버쇼핑 셀러 컨설팅(1지망)과 클립 창작자 콘텐츠 인사이트 리포트(2지망)를 같은 데이터→근거 리포트 엔진으로 잇는 영업관리·인사이트 도구." />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">N</div>
+          <div>
+            <h1 id="brandTitle">셀러 그로스 코파일럿</h1>
+            <p id="brandSub">네이버쇼핑 셀러 컨설팅 영업관리 도구</p>
+          </div>
+        </div>
+
+        <div class="mode-toggle" role="tablist" aria-label="사용자 모드">
+          <button class="mode-btn active" data-mode="seller" role="tab" aria-selected="true">셀러 컨설팅</button>
+          <button class="mode-btn" data-mode="creator" role="tab" aria-selected="false">클립 창작자</button>
+        </div>
+
+        <nav class="nav-list" aria-label="Workspace">
+          <button class="nav-item active" data-view="dashboard">
+            <i data-lucide="layout-dashboard"></i><span>대시보드</span>
+          </button>
+          <button class="nav-item" data-view="sellers">
+            <i data-lucide="store"></i><span id="navItemsLabel">셀러</span>
+          </button>
+          <button class="nav-item" data-view="report">
+            <i data-lucide="file-text"></i><span>AI 리포트</span>
+          </button>
+          <button class="nav-item" data-view="research">
+            <i data-lucide="radar"></i><span>벤치마크</span>
+          </button>
+          <button class="nav-item" data-view="sql">
+            <i data-lucide="database"></i><span>SQL 로직</span>
+          </button>
+          <button class="nav-item" data-view="testing">
+            <i data-lucide="clipboard-check"></i><span>사용성</span>
+          </button>
+          <button class="nav-item nav-bridge" data-view="flywheel">
+            <i data-lucide="git-merge"></i><span>플라이휠</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-panel">
+          <p class="eyebrow">주요 기능</p>
+          <p id="sidebarNote">AI 보고 자동화, 대시보드, 이커머스 리서치, 현장 검증, 데이터 로직을 하나의 검토 가능한 산출물로 묶었습니다.</p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="topEyebrow">영업관리 도구</p>
+            <h2 id="viewTitle">셀러 컨설팅 대시보드</h2>
+          </div>
+          <div class="top-actions">
+            <label class="select-label" for="segmentFilter">카테고리</label>
+            <select id="segmentFilter">
+              <option value="all">전체</option>
+              <option value="beauty">뷰티</option>
+              <option value="fashion">패션</option>
+              <option value="grocery">식품</option>
+              <option value="living">리빙</option>
+              <option value="sports">스포츠</option>
+            </select>
+            <button id="exportCsvBtn" class="icon-btn" type="button" title="CSV 내보내기" aria-label="CSV 내보내기">
+              <i data-lucide="download"></i>
+            </button>
+          </div>
+        </header>
+
+        <section id="dashboard" class="view active">
+          <div class="kpi-grid" id="kpiGrid"></div>
+          <div class="content-grid">
+            <section class="panel span-2">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Growth Priority</p>
+                  <h3 id="scatterTitle">셀러 기회 맵</h3>
+                </div>
+                <div class="legend" id="scatterLegend">
+                  <span><b class="dot green"></b>안정</span>
+                  <span><b class="dot amber"></b>주의</span>
+                  <span><b class="dot red"></b>조치</span>
+                </div>
+              </div>
+              <div class="scatter" id="scatterPlot" aria-label="기회 산점도"></div>
+              <p class="axis-note" id="scatterAxisNote"></p>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Consulting Queue</p>
+                  <h3 id="actionsTitle">다음 추천 액션</h3>
+                </div>
+              </div>
+              <div id="actionList" class="action-list"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Category</p>
+                  <h3 id="categoryBarsTitle">카테고리별 GMV</h3>
+                </div>
+              </div>
+              <div class="bar-chart" id="categoryBars"></div>
+            </section>
+            <section class="panel span-2">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Pipeline</p>
+                  <h3 id="funnelTitle">셀러 컨설팅 퍼널</h3>
+                </div>
+              </div>
+              <div class="funnel" id="funnel"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="sellers" class="view">
+          <div class="seller-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Priority Table</p>
+                  <h3 id="itemTableTitle">컨설팅 후보 셀러</h3>
+                </div>
+                <input id="sellerSearch" type="search" placeholder="검색" />
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr id="itemHead">
+                      <th>셀러</th>
+                      <th>카테고리</th>
+                      <th>GMV</th>
+                      <th>성장률</th>
+                      <th>리스크</th>
+                      <th>열기</th>
+                    </tr>
+                  </thead>
+                  <tbody id="sellerRows"></tbody>
+                </table>
+              </div>
+            </section>
+            <aside class="panel seller-detail" id="sellerDetail"></aside>
+          </div>
+        </section>
+
+        <section id="report" class="view">
+          <div class="report-layout">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">AI Report Automation</p>
+                  <h3 id="reportTitle">주간 셀러 브리프</h3>
+                </div>
+                <div class="top-actions">
+                  <button id="generateAiBtn" class="primary-btn" type="button">
+                    <i data-lucide="sparkles"></i><span>AI로 생성</span>
+                  </button>
+                  <button id="copyReportBtn" class="icon-btn" type="button" title="마크다운 복사" aria-label="마크다운 복사">
+                    <i data-lucide="copy"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="ai-key-row">
+                <i data-lucide="key-round"></i>
+                <input id="geminiKey" type="password" placeholder="Gemini API 키 (브라우저에만 저장, 서버 전송 없음)" autocomplete="off" spellcheck="false" />
+                <button id="saveKeyBtn" class="mini-btn" type="button">저장</button>
+                <span id="keyStatus" class="key-status"></span>
+              </div>
+
+              <div class="controls-row">
+                <label>
+                  <span id="reportItemLabel">셀러</span>
+                  <select id="reportSeller"></select>
+                </label>
+                <label>
+                  어조
+                  <select id="reportTone">
+                    <option value="executive">임원 보고용</option>
+                    <option value="field">현장 컨설턴트용</option>
+                    <option value="seller">셀러 대상</option>
+                  </select>
+                </label>
+              </div>
+
+              <p id="reportSource" class="report-source"></p>
+              <article class="report-preview" id="reportPreview"></article>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Prompt Chain</p>
+                  <h3>재사용 워크플로우</h3>
+                </div>
+              </div>
+              <ol class="workflow" id="workflowList"></ol>
+            </section>
+          </div>
+        </section>
+
+        <section id="research" class="view">
+          <div class="content-grid">
+            <section class="panel span-2">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Benchmarking</p>
+                  <h3 id="benchmarkTitle">영업관리 도구 비교</h3>
+                </div>
+              </div>
+              <div class="benchmark-grid" id="benchmarkGrid"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Research Output</p>
+                  <h3>제품 가설</h3>
+                </div>
+              </div>
+              <div class="hypothesis-list" id="hypothesisList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="sql" class="view">
+          <div class="content-grid">
+            <section class="panel span-2">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Data Analysis</p>
+                  <h3 id="sqlTitle">기회 점수 산출 쿼리</h3>
+                </div>
+                <button id="copySqlBtn" class="icon-btn" type="button" title="SQL 복사" aria-label="SQL 복사">
+                  <i data-lucide="copy"></i>
+                </button>
+              </div>
+              <div class="sql-explainer">
+                <p class="eyebrow">이 쿼리가 하는 일 (쉽게)</p>
+                <p id="sqlExplain">각 셀러의 최근 8주 지표(매출·전환·리뷰·광고 효율)를 모아 <b>하나의 '기회 점수'</b>로 압축하고, <b>먼저 챙길 셀러 순서</b>로 정렬합니다. 지표가 낮은 셀러일수록 점수가 높아져요 — 개선 여지가 가장 크기 때문입니다.</p>
+                <div class="sql-steps">
+                  <span><b>1</b> 주간 데이터 수집</span>
+                  <span><b>2</b> 기회 점수로 압축</span>
+                  <span><b>3</b> 우선순위 정렬</span>
+                </div>
+              </div>
+              <pre class="code-block" id="sqlBlock"></pre>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Model Notes</p>
+                  <h3>점수 가중치</h3>
+                </div>
+              </div>
+              <div class="weight-list" id="weightList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="testing" class="view">
+          <div class="content-grid">
+            <section class="panel span-2">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Field Validation</p>
+                  <h3>사용성 테스트 계획</h3>
+                </div>
+              </div>
+              <div class="test-grid" id="testGrid"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Success Metrics</p>
+                  <h3>도입 신호</h3>
+                </div>
+              </div>
+              <div class="metric-stack" id="metricStack"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="flywheel" class="view">
+          <div class="content-grid">
+            <section class="panel span-2 bridge-hero">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Commerce × Content · 1지망 ↔ 2지망</p>
+                  <h3>커머스-콘텐츠 플라이휠</h3>
+                </div>
+              </div>
+              <p class="bridge-lead">클립의 <b>정보 태그</b>(쇼핑 태그 전년比 약 +350%)와 <b>쇼핑 커넥트</b> 때문에, 창작자의 콘텐츠는 곧 셀러의 수요로 이어집니다. 같은 인사이트 엔진이 두 사용자를 먹입니다.</p>
+              <div class="flywheel-flow" id="flywheelFlow"></div>
+            </section>
+            <section class="panel span-2">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Signal → Opportunity</p>
+                  <h3>뜨는 클립 주제 → 셀러 기회 연결</h3>
+                </div>
+              </div>
+              <div class="flywheel-links" id="flywheelLinks"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">One Engine</p>
+                  <h3>같은 엔진, 두 사용자</h3>
+                </div>
+              </div>
+              <div class="engine-map" id="engineMap"></div>
+            </section>
+            <section class="panel span-3">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">NAVER Cloud 스택 매핑</p>
+                  <h3>실서비스라면 이렇게 구현됩니다</h3>
+                </div>
+              </div>
+              <div class="ncp-grid" id="ncpGrid"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+# --- secrets / API keys (never commit) ---
+.env
+.env.*
+*.key
+key.txt
+keys.txt
+secret*.txt
+secrets*.txt
+api-key*.txt
+gemini*.txt
+
+# --- private working notes (do not publish) ---
+application-fit-notes.md
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+
+# --- node (if tooling is added later) ---
+node_modules/
+dist/
+.cache/
