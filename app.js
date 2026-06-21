@@ -229,7 +229,7 @@ const DOMAINS = {
       sidebarNote: "AI 보고 자동화, 대시보드, 이커머스 리서치, 현장 검증, 데이터 로직을 하나의 검토 가능한 산출물로 묶었습니다.",
       scatterTitle: "셀러 기회 맵", scatterAxis: "가로축 = 컨설팅 준비도 · 세로축 = 최근 성장률 · 크기 = GMV",
       categoryBars: "카테고리별 GMV", funnelTitle: "셀러 컨설팅 퍼널",
-      itemTableTitle: "컨설팅 후보 셀러", itemHead: ["셀러", "카테고리", "GMV", "성장률", "리스크", "열기"],
+      itemTableTitle: "컨설팅 후보 셀러", itemHead: ["셀러", "카테고리", "GMV", "성장률", "리스크", "상세"],
       reportTitle: "주간 셀러 브리프", reportItemLabel: "셀러",
       benchmarkTitle: "영업관리 도구 비교", sqlTitle: "셀러 기회 점수 산출 쿼리",
       sqlExplain: "각 셀러의 최근 8주 지표(매출·전환·리뷰·광고 효율)를 모아 <b>하나의 '기회 점수'</b>로 압축하고, <b>먼저 챙길 셀러 순서</b>로 정렬합니다. 지표가 낮은 셀러일수록 점수가 높아져요 — 개선 여지가 가장 크기 때문입니다.",
@@ -325,7 +325,7 @@ const DOMAINS = {
       sidebarNote: "트렌드 신호 분석, 주제 기회 맵, '이번 주 만들 것' 리포트 자동화, 창작자 검증, 데이터 로직을 하나의 산출물로 묶었습니다.",
       scatterTitle: "주제 기회 맵", scatterAxis: "가로축 = 낮은 포화도(오른쪽일수록 기회) · 세로축 = 성장 속도 · 크기 = 조회수",
       categoryBars: "카테고리별 조회수", funnelTitle: "콘텐츠 제작 파이프라인",
-      itemTableTitle: "추천 후보 주제 / 포맷", itemHead: ["주제 / 포맷", "카테고리", "조회수", "성장속도", "상태", "열기"],
+      itemTableTitle: "추천 후보 주제 / 포맷", itemHead: ["주제 / 포맷", "카테고리", "조회수", "성장속도", "상태", "상세"],
       reportTitle: "주간 창작자 브리프", reportItemLabel: "주제",
       benchmarkTitle: "창작자 분석 도구 비교", sqlTitle: "주제 기회 점수 산출 쿼리",
       sqlExplain: "각 주제의 최근 신호(조회수·시청완료·재생산·검색 유입·상품태그 전환)를 모아 <b>하나의 '기회 점수'</b>로 압축합니다. 단순 조회수 1위가 아니라 <b>성장 속도는 빠른데 아직 포화되지 않은 주제</b>일수록 점수가 높아져요 — 지금 들어가면 기회이기 때문입니다.",
@@ -460,6 +460,7 @@ function renderScatter() {
     state.selectedId = b.dataset.id;
     setView("sellers");
     renderItemRows(); renderItemDetail(); renderReportControls(); renderReport();
+    focusDetail();
   }));
 }
 
@@ -504,13 +505,30 @@ function renderItemRows() {
       <td>${d.formatPrimary(d.primary(it))}</td>
       <td>${it.growth.toFixed(1)}%</td>
       <td style="color:${d.riskColorOf(it.risk)}"><b>${d.riskLabels[it.risk]}</b></td>
-      <td><button class="mini-btn" data-id="${it.id}" type="button">열기</button></td>
+      <td><button class="mini-btn" data-id="${it.id}" type="button">상세</button></td>
     </tr>
   `).join("");
   $$("#sellerRows .mini-btn").forEach((btn) => btn.addEventListener("click", () => {
     state.selectedId = btn.dataset.id;
     renderItemRows(); renderItemDetail(); renderReportControls(); renderReport();
+    focusDetail();
   }));
+}
+
+// 상세 패널로 시선 이동 — 화면 밖이면 스크롤해서 보여주고, 항상 살짝 강조해 '열렸다'는 신호를 줌.
+function focusDetail() {
+  const el = $("#sellerDetail");
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  const vh = window.innerHeight || document.documentElement.clientHeight;
+  const visible = r.top >= 0 && r.top < vh * 0.8;
+  if (!visible) {
+    try { el.scrollIntoView({ behavior: "smooth", block: "center" }); }
+    catch (_) { el.scrollIntoView(); }
+  }
+  el.classList.remove("flash");
+  void el.offsetWidth; // 리플로우로 애니메이션 재시작
+  el.classList.add("flash");
 }
 
 function renderItemDetail() {

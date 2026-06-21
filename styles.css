@@ -558,7 +558,13 @@ tr.selected { background: var(--accent-soft); box-shadow: inset 2px 0 0 var(--ac
 .mini-btn:hover { border-color: var(--accent); color: var(--accent-text); background: var(--accent-soft); }
 
 /* ── 상세 패널 ── */
-.seller-detail { position: sticky; top: 20px; align-self: start; }
+.seller-detail { position: sticky; top: 20px; align-self: start; border-radius: var(--r); }
+.seller-detail.flash { animation: detailFlash 0.9s ease; }
+@keyframes detailFlash {
+  0% { box-shadow: 0 0 0 0 rgba(3, 199, 90, 0); }
+  25% { box-shadow: 0 0 0 4px rgba(3, 199, 90, 0.28); }
+  100% { box-shadow: 0 0 0 0 rgba(3, 199, 90, 0); }
+}
 .seller-detail h4 { margin: 0 0 6px; font-size: 21px; font-weight: 700; letter-spacing: -0.02em; }
 
 .detail-stat {
